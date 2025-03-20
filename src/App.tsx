@@ -7,10 +7,10 @@ import {
   CssBaseline,
   IconButton,
   InputBase,
+  Stack,
   ThemeProvider,
   Toolbar,
   Typography,
-  useMediaQuery,
 } from "@mui/material";
 import { useCallback, useEffect, useState } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
@@ -98,8 +98,6 @@ function WatchlistView({
 }
 
 function App() {
-  const [mobileOpen, setMobileOpen] = useState(false);
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [movies, setMovies] = useState<Movie[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
@@ -125,10 +123,6 @@ function App() {
     closeDialog: closeMenuDialog,
   } = useDialog();
 
-  const handleDrawerToggle = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
   const loadMovies = useCallback(async () => {
     if (!hasMore) return;
 
@@ -137,16 +131,16 @@ function App() {
         ? await api.searchMovies(searchQuery, page)
         : await api.getPopularMovies(page);
 
-      if (data.results.length === 0) {
+      if (data.length === 0) {
         setHasMore(false);
         return;
       }
 
       setMovies((prev) => {
         // 確保沒有重複的電影
-        const newMovieIds = new Set(data.results.map((m) => m.id));
+        const newMovieIds = new Set(data.map((m) => m.id));
         const uniquePrevMovies = prev.filter((m) => !newMovieIds.has(m.id));
-        return [...uniquePrevMovies, ...data.results];
+        return [...uniquePrevMovies, ...data];
       });
     } catch (error) {
       console.error("Error loading movies:", error);
@@ -232,23 +226,19 @@ function App() {
     <BrowserRouter>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Box sx={{ display: "flex" }}>
-          {/* App Bar */}
-          <AppBar position="fixed">
+        {/* App Bar */}
+        <Stack sx={{ height: "100svh", width: "100svw" }}>
+          <AppBar position="sticky">
             <Toolbar>
-              <IconButton
-                color="inherit"
-                edge="start"
-                onClick={handleDrawerToggle}
-                sx={{ mr: 2, display: { sm: "none" } }}
-              >
-                <MenuIcon />
-              </IconButton>
               <Typography
                 variant="h6"
                 noWrap
                 component="div"
-                sx={{ flexGrow: 0, display: { xs: "none", sm: "block" } }}
+                sx={{
+                  flexGrow: 0,
+                  display: { xs: "none", sm: "block" },
+                  marginRight: 2,
+                }}
               >
                 我的電影網
               </Typography>
@@ -260,8 +250,7 @@ function App() {
                   borderRadius: 1,
                   backgroundColor: "rgba(255, 255, 255, 0.15)",
                   "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.25)" },
-                  marginLeft: 2,
-                  width: "auto",
+                  width: "100%",
                   flexGrow: 1,
                 }}
               >
@@ -287,9 +276,13 @@ function App() {
                   }}
                 />
               </Box>
+              {/* Menu Icon - Adjust the box to prevent overflow */}
               <IconButton
                 color="inherit"
-                sx={{ borderRadius: "4px" }}
+                sx={{
+                  borderRadius: "4px",
+                  padding: { xs: 1, sm: 2 },
+                }}
                 onClick={openMenuDialog}
               >
                 <MenuIcon />
@@ -301,15 +294,14 @@ function App() {
           <MenuDrawer open={menuOpen} onClose={closeMenuDialog} />
 
           {/* 主要內容區域 */}
-          <Box
-            component="main"
-            sx={{
-              flexGrow: 1,
-              p: 3,
-              marginTop: "64px",
-            }}
-          >
-            <Container maxWidth="xl">
+          <Container maxWidth="xl">
+            <Box
+              component="main"
+              sx={{
+                flexGrow: 1,
+                p: 3,
+              }}
+            >
               <Routes>
                 <Route
                   path="/"
@@ -336,14 +328,14 @@ function App() {
                   }
                 />
               </Routes>
-            </Container>
-            <MovieDetail
-              movie={selectedMovie}
-              open={movieDetailOpen}
-              onClose={closeMovieDetailDialog}
-            />
-          </Box>
-        </Box>
+            </Box>
+          </Container>
+        </Stack>
+        <MovieDetail
+          movie={selectedMovie}
+          open={movieDetailOpen}
+          onClose={closeMovieDetailDialog}
+        />
       </ThemeProvider>
     </BrowserRouter>
   );
