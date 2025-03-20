@@ -5,10 +5,12 @@ import {
   Dialog,
   DialogContent,
   DialogTitle,
-  Grid,
   IconButton,
+  Skeleton,
   Typography,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
+import { useState } from "react";
 import { api, MovieDetails } from "../services/api";
 
 interface MovieDetailProps {
@@ -18,11 +20,21 @@ interface MovieDetailProps {
 }
 
 export const MovieDetail = ({ movie, open, onClose }: MovieDetailProps) => {
+  const [backdropLoaded, setBackdropLoaded] = useState(false);
+  const [castImagesLoaded, setCastImagesLoaded] = useState<{
+    [key: number]: boolean;
+  }>({});
+
   if (!movie) return null;
 
   const trailer = movie.videos.results.find(
     (video) => video.type === "Trailer"
   );
+
+  const handleBackdropLoad = () => setBackdropLoaded(true);
+  const handleCastImageLoad = (id: number) => {
+    setCastImagesLoaded((prev) => ({ ...prev, [id]: true }));
+  };
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="md" fullWidth scroll="body">
@@ -35,32 +47,63 @@ export const MovieDetail = ({ movie, open, onClose }: MovieDetailProps) => {
         </Box>
       </DialogTitle>
       <DialogContent>
-        <Box sx={{ mb: 3 }}>
+        <Box
+          sx={{
+            mb: 3,
+            position: "relative",
+            width: "100%",
+            height: 0,
+            paddingBottom: "56.25%", // 16:9 aspect ratio
+            backgroundColor: "rgba(0, 0, 0, 0.1)",
+          }}
+        >
+          {!backdropLoaded && (
+            <Skeleton
+              variant="rectangular"
+              width="100%"
+              height="100%"
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                borderRadius: "8px",
+              }}
+            />
+          )}
           <img
             src={api.getImageUrl(movie.backdrop_path, "original")}
             alt={movie.title}
-            style={{ width: "100%", borderRadius: "8px" }}
+            style={{
+              width: "100%",
+              height: "100%",
+              position: "absolute",
+              top: 0,
+              left: 0,
+              objectFit: "cover",
+              borderRadius: "8px",
+              display: backdropLoaded ? "block" : "none",
+            }}
+            onLoad={handleBackdropLoad}
           />
         </Box>
-
-        <Typography variant="h6" gutterBottom>
-          概述
-        </Typography>
-        <Typography paragraph>{movie.overview}</Typography>
-
+        <Box sx={{ mb: 3 }}>
+          <Typography variant="h6" gutterBottom>
+            概述
+          </Typography>
+          <Typography variant="body1">{movie.overview}</Typography>
+        </Box>
         <Box sx={{ mb: 2 }}>
           {movie.genres.map((genre) => (
             <Chip key={genre.id} label={genre.name} sx={{ mr: 1, mb: 1 }} />
           ))}
         </Box>
-
         <Grid container spacing={2} sx={{ mb: 3 }}>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Typography variant="subtitle1">
               上映日期: {movie.release_date}
             </Typography>
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <Typography variant="subtitle1">
               片長: {movie.runtime} 分鐘
             </Typography>
@@ -72,15 +115,24 @@ export const MovieDetail = ({ movie, open, onClose }: MovieDetailProps) => {
             <Typography variant="h6" gutterBottom>
               預告片
             </Typography>
-            <iframe
-              width="100%"
-              height="315"
-              src={`https://www.youtube.com/embed/${trailer.key}`}
-              title="YouTube video player"
-              frameBorder="0"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
+            <Box
+              sx={{ position: "relative", paddingTop: "56.25%", width: "100%" }}
+            >
+              <iframe
+                width="100%"
+                height="100%"
+                src={`https://www.youtube.com/embed/${trailer.key}`}
+                title="YouTube video player"
+                style={{
+                  border: "none",
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                }}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </Box>
           </Box>
         )}
 
@@ -89,17 +141,48 @@ export const MovieDetail = ({ movie, open, onClose }: MovieDetailProps) => {
         </Typography>
         <Grid container spacing={2}>
           {movie.credits.cast.slice(0, 6).map((actor) => (
-            <Grid item xs={6} sm={4} md={2} key={actor.id}>
+            <Grid size={{ xs: 6, sm: 4, md: 2 }} key={actor.id}>
               <Box sx={{ textAlign: "center" }}>
-                <img
-                  src={api.getImageUrl(actor.profile_path, "w185")}
-                  alt={actor.name}
-                  style={{
+                <Box
+                  sx={{
+                    position: "relative",
                     width: "100%",
+                    paddingBottom: "150%", // 2:3 aspect ratio typical for actor photos
+                    backgroundColor: "rgba(0, 0, 0, 0.1)",
                     borderRadius: "4px",
                     marginBottom: "8px",
                   }}
-                />
+                >
+                  {!castImagesLoaded[actor.id] && (
+                    <Skeleton
+                      variant="rectangular"
+                      width="100%"
+                      height="100%"
+                      sx={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        borderRadius: "4px",
+                      }}
+                    />
+                  )}
+                  <img
+                    src={api.getImageUrl(actor.profile_path, "w185")}
+                    alt={actor.name}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      objectFit: "cover",
+                      borderRadius: "4px",
+                      display: castImagesLoaded[actor.id] ? "block" : "none",
+                    }}
+                    onLoad={() => handleCastImageLoad(actor.id)}
+                    onError={() => handleCastImageLoad(actor.id)}
+                  />
+                </Box>
                 <Typography variant="subtitle2">{actor.name}</Typography>
                 <Typography variant="caption" color="text.secondary">
                   {actor.character}
