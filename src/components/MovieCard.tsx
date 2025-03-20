@@ -8,7 +8,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { api, Movie } from "../services/api";
+import { api, Movie } from "services/api";
 
 interface MovieCardProps {
   movie: Movie;

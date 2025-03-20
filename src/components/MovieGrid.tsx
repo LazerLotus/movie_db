@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { Movie } from "../services/api";
+import { Movie } from "services/api";
 import { MovieCard } from "./MovieCard";
 
 interface MovieGridProps {
@@ -8,7 +8,7 @@ interface MovieGridProps {
   loading: boolean;
   hasMore: boolean;
   onMovieClick: (movie: Movie) => void;
-  watchlist: Set<number>;
+  watchlist: Movie[];
   onToggleWatchlist: (movie: Movie) => void;
 }
 
@@ -28,7 +28,7 @@ export const MovieGrid = ({
             <MovieCard
               movie={movie}
               onMovieClick={onMovieClick}
-              isInWatchlist={watchlist.has(movie.id)}
+              isInWatchlist={watchlist.some((item) => item.id === movie.id)}
               onToggleWatchlist={onToggleWatchlist}
             />
           </Grid>

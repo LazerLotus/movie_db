@@ -11,7 +11,7 @@ import {
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { useState } from "react";
-import { api, MovieDetails } from "../services/api";
+import { api, MovieDetails } from "services/api";
 
 interface MovieDetailProps {
   movie: MovieDetails | null;
