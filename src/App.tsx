@@ -1,4 +1,6 @@
 import { createTheme, CssBaseline, Stack, ThemeProvider } from "@mui/material";
+import { ErrorBanner } from "features/ErrorBanner";
+import { ErrorProvider } from "features/ErrorContext";
 import MainRouter from "./features/MainRouter";
 
 // 創建深色主題
@@ -18,10 +20,13 @@ const theme = createTheme({
 const App = () => {
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Stack sx={{ height: "100svh", width: "100svw" }}>
-        <MainRouter />
-      </Stack>
+      <ErrorProvider>
+        <CssBaseline />
+        <Stack sx={{ height: "100svh", width: "100svw" }}>
+          <MainRouter />
+        </Stack>
+        <ErrorBanner />
+      </ErrorProvider>
     </ThemeProvider>
   );
 };

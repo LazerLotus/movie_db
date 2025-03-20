@@ -205,24 +205,18 @@ const fetchTMDB = async <T>(
   endpoint: string,
   adapter: (data: unknown) => T
 ): Promise<T> => {
-  try {
-    const url = `${BASE_URL}${endpoint}`;
-    const response = await fetch(url, {
-      headers: {
-        Authorization: `Bearer ${API_KEY}`,
-        "Content-Type": "application/json",
-      },
-    });
+  const url = `${BASE_URL}${endpoint}`;
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${API_KEY}`,
+      "Content-Type": "application/json",
+    },
+  });
 
-    if (!response.ok) {
-      throw new Error(`TMDB API Error: ${response.status}`);
-    }
-
-    const data = await response.json();
-    return adapter(data);
-  } catch (error) {
-    console.error("API Error:", error);
-    // Return default values through adapter
-    return adapter({});
+  if (!response.ok) {
+    throw new Error(`TMDB API Error: ${response.status}`);
   }
+
+  const data = await response.json();
+  return adapter(data);
 };

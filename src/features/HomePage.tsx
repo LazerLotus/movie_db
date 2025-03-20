@@ -5,6 +5,7 @@ import MovieAppBar from "features/MovieAppBar";
 import useDialog from "hooks/useDialog";
 import { useCallback, useEffect, useState } from "react";
 import { api, Movie, MovieDetails } from "services/api";
+import { useError } from "./ErrorContext";
 
 const HomePage = () => {
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -25,7 +26,7 @@ const HomePage = () => {
     openDialog: openMovieDetailDialog,
     closeDialog: closeMovieDetailDialog,
   } = useDialog();
-
+  const { showError } = useError();
   const loadMovies = useCallback(async () => {
     if (!hasMore) return;
 
@@ -46,11 +47,11 @@ const HomePage = () => {
         return [...uniquePrevMovies, ...data];
       });
     } catch (error) {
-      console.error("Error loading movies:", error);
+      showError(`Error loading movies, ${error}`);
     } finally {
       setIsLoading(false);
     }
-  }, [hasMore, page, searchQuery]);
+  }, [hasMore, page, searchQuery, showError]);
 
   const loadMovieDetails = async (movieId: number) => {
     try {
@@ -58,7 +59,7 @@ const HomePage = () => {
       const data = await api.getMovieDetails(movieId);
       setSelectedMovie(data);
     } catch (error) {
-      console.error("Error loading movie details:", error);
+      showError(`Error loading movie details, ${error}`);
     }
   };
 

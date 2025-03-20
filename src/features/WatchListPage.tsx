@@ -4,6 +4,7 @@ import { MovieGrid } from "components/MovieGrid";
 import useDialog from "hooks/useDialog";
 import { useEffect, useState } from "react";
 import { api, Movie, MovieDetails } from "services/api";
+import { useError } from "./ErrorContext";
 import MovieAppBar from "./MovieAppBar";
 
 const WatchlistPage = () => {
@@ -23,6 +24,7 @@ const WatchlistPage = () => {
     openDialog: openMovieDetailDialog,
     closeDialog: closeMovieDetailDialog,
   } = useDialog();
+  const { showError } = useError();
 
   const filteredWatchlist = watchlist.filter((movie) =>
     movie.title.toLowerCase().includes(searchQuery.toLowerCase())
@@ -42,7 +44,7 @@ const WatchlistPage = () => {
       const data = await api.getMovieDetails(movieId);
       setSelectedMovie(data);
     } catch (error) {
-      console.error("Error loading movie details:", error);
+      showError(`Error loading movie details, ${error}`);
     }
   };
 
