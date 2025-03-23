@@ -1,4 +1,5 @@
-import { Box, Typography } from "@mui/material";
+import CasinoIcon from "@mui/icons-material/Casino";
+import { Box, Button, Stack, Typography } from "@mui/material";
 import { MovieDetail } from "components/MovieDetail";
 import { MovieGrid } from "components/MovieGrid";
 import useDialog from "hooks/useDialog";
@@ -6,6 +7,7 @@ import { useEffect, useState } from "react";
 import { api, Movie, MovieDetails } from "services/api";
 import { useError } from "./ErrorContext";
 import MovieAppBar from "./MovieAppBar";
+import MovieLotteryDialog from "./MovieLottery";
 
 const WatchlistPage = () => {
   const [watchlist, setWatchlist] = useState<Movie[]>(() => {
@@ -23,6 +25,11 @@ const WatchlistPage = () => {
     dialogOpen: movieDetailOpen,
     openDialog: openMovieDetailDialog,
     closeDialog: closeMovieDetailDialog,
+  } = useDialog();
+  const {
+    dialogOpen: lotteryOpen,
+    openDialog: openLottery,
+    closeDialog: closeLottery,
   } = useDialog();
   const { showError } = useError();
 
@@ -72,22 +79,47 @@ const WatchlistPage = () => {
     <Box component="main">
       <MovieAppBar onSearchInputChange={handleSearchInputChange} />
       <Box sx={{ p: 3 }}>
-        <Typography variant="h4" gutterBottom>
-          待看清單
-        </Typography>
-        <MovieGrid
-          movies={filteredWatchlist}
-          loading={false}
-          hasMore={false}
-          onMovieClick={(movie) => handleOpenMovieDetail(movie.id)}
-          watchlist={watchlist}
-          onToggleWatchlist={handleToggleWatchlist}
-        />
+        <Stack direction="row" justifyContent="space-between">
+          <Typography variant="h4" gutterBottom>
+            待看清單
+          </Typography>
+          {watchlist.length > 0 && (
+            <Box>
+              <Button
+                variant="contained"
+                color="secondary"
+                startIcon={<CasinoIcon />}
+                onClick={openLottery}
+              >
+                隨機選片
+              </Button>
+            </Box>
+          )}
+        </Stack>
+        {watchlist.length === 0 ? (
+          <Typography variant="body1">
+            你的待看清單是空的。請從探索電影中添加電影。
+          </Typography>
+        ) : (
+          <MovieGrid
+            movies={filteredWatchlist}
+            loading={false}
+            hasMore={false}
+            onMovieClick={(movie) => handleOpenMovieDetail(movie.id)}
+            watchlist={watchlist}
+            onToggleWatchlist={handleToggleWatchlist}
+          />
+        )}
       </Box>
       <MovieDetail
         movie={selectedMovie}
         open={movieDetailOpen}
         onClose={closeMovieDetailDialog}
+      />
+      <MovieLotteryDialog
+        watchlist={watchlist}
+        open={lotteryOpen}
+        onClose={closeLottery}
       />
     </Box>
   );

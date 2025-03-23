@@ -5,6 +5,7 @@ import {
   CardContent,
   CardMedia,
   IconButton,
+  Skeleton,
   Tooltip,
   Typography,
 } from "@mui/material";
@@ -23,6 +24,8 @@ export const MovieCard = ({
   isInWatchlist,
   onToggleWatchlist,
 }: MovieCardProps) => {
+  const imageUrl = api.getImageUrl(movie.poster_path);
+
   return (
     <Card
       sx={{
@@ -38,7 +41,7 @@ export const MovieCard = ({
     >
       <CardMedia
         component="img"
-        image={api.getImageUrl(movie.poster_path)}
+        image={imageUrl}
         alt={movie.title}
         sx={{
           cursor: "pointer",
@@ -46,6 +49,10 @@ export const MovieCard = ({
           objectFit: "cover",
         }}
         onClick={() => onMovieClick(movie)}
+        onError={() => {
+          console.log("Error loading image");
+          return <Skeleton variant="rectangular" height={400} />;
+        }}
       />
       <Box
         sx={{
