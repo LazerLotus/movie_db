@@ -8,7 +8,7 @@ const BASE_URL = "https://api.themoviedb.org/3";
 const IMAGE_BASE_URL = "https://image.tmdb.org/t/p";
 
 export const api = {
-  // 搜尋電影
+  // search movies
   searchMovies: (query: string, page: number = 1) =>
     fetchTMDB(
       `/search/movie?query=${encodeURIComponent(
@@ -17,25 +17,24 @@ export const api = {
       (data) => MovieAdapter.toMovieList(data)
     ),
 
-  // 獲取熱門電影
+  // get popular movies
   getPopularMovies: (page: number = 1) =>
     fetchTMDB(`/movie/popular?page=${page}&language=zh-TW`, (data) =>
       MovieAdapter.toMovieList(data)
     ),
 
-  // 獲取電影詳情
+  // get movie details
   getMovieDetails: (movieId: number) =>
     fetchTMDB(
       `/movie/${movieId}?language=zh-TW&append_to_response=videos,credits`,
       (data) => MovieAdapter.toMovieDetails(data)
     ),
 
-  // 獲取電影圖片 (這個不需要 API key)
+  // get image url
   getImageUrl: (path: string | null, size: string = "w500") =>
     path ? `${IMAGE_BASE_URL}/${size}${path}` : "/placeholder-image.jpg",
 };
 
-// API 響應類型定義
 export interface Movie {
   id: number;
   title: string;
@@ -200,7 +199,6 @@ class MovieAdapter {
   }
 }
 
-// Modify your fetch function to use the adapter
 const fetchTMDB = async <T>(
   endpoint: string,
   adapter: (data: unknown) => T

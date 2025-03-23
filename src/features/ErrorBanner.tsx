@@ -2,7 +2,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { Alert, IconButton, Snackbar } from "@mui/material";
 import { useError } from "./ErrorContext";
 
-export function ErrorBanner() {
+export const ErrorBanner = () => {
   const { error, clearError } = useError();
   const isErrorShow = Boolean(error);
 
@@ -32,4 +32,4 @@ export function ErrorBanner() {
       </Alert>
     </Snackbar>
   );
-}
+};

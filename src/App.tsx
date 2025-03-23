@@ -3,7 +3,6 @@ import { ErrorBanner } from "features/ErrorBanner";
 import { ErrorProvider } from "features/ErrorContext";
 import MainRouter from "./features/MainRouter";
 
-// 創建深色主題
 const theme = createTheme({
   palette: {
     mode: "dark",

@@ -100,17 +100,17 @@ const HomePage = () => {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function debounce<T extends (...args: any[]) => void>(
+  const debounce = <T extends (...args: any[]) => void>(
     func: T,
     delay: number
-  ): (...args: Parameters<T>) => void {
+  ): ((...args: Parameters<T>) => void) => {
     let timeoutId: ReturnType<typeof setTimeout>;
 
     return (...args: Parameters<T>) => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => func(...args), delay);
     };
-  }
+  };
 
   window.addEventListener("scroll", debounce(handleScroll, 500));
 

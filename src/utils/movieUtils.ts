@@ -6,7 +6,7 @@ import { Movie } from "../services/api"; // Adjust import path as needed
  * @param count Number of movies to return
  * @returns Array of randomly selected movies
  */
-export function getRandomMovies(watchlist: Movie[], count: number): Movie[] {
+export const getRandomMovies = (watchlist: Movie[], count: number): Movie[] => {
   // Validate inputs
   if (watchlist.length === 0) {
     throw new Error("No movies available");
@@ -39,14 +39,14 @@ export function getRandomMovies(watchlist: Movie[], count: number): Movie[] {
   }
 
   return result;
-}
+};
 
 /**
  * Gets a single random movie from a watchlist
  * @param watchlist Array of movies to choose from
  * @returns A randomly selected movie or null if watchlist is empty
  */
-export function getRandomMovie(watchlist: Movie[]): Movie | null {
+export const getRandomMovie = (watchlist: Movie[]): Movie | null => {
   if (watchlist.length === 0) return null;
   return watchlist[Math.floor(Math.random() * watchlist.length)];
-}
+};

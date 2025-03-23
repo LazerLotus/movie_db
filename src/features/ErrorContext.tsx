@@ -14,7 +14,7 @@ interface ErrorContextType {
 
 const ErrorContext = createContext<ErrorContextType | undefined>(undefined);
 
-export function ErrorProvider({ children }: { children: ReactNode }) {
+export const ErrorProvider = ({ children }: { children: ReactNode }) => {
   const [error, setError] = useState<string | null>(null);
 
   const showError = useCallback((message: string) => {
@@ -32,13 +32,13 @@ export function ErrorProvider({ children }: { children: ReactNode }) {
       {children}
     </ErrorContext.Provider>
   );
-}
+};
 
 // eslint-disable-next-line react-refresh/only-export-components
-export function useError() {
+export const useError = () => {
   const context = useContext(ErrorContext);
   if (context === undefined) {
     throw new Error("useError must be used within an ErrorProvider");
   }
   return context;
-}
+};
