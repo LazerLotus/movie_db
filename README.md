@@ -50,7 +50,13 @@
    VITE_TMDB_API_KEY=your_tmdb_api_key
    ```
 
-4. Start the development server
+4. install pre-commit
+
+```yarn prepare
+
+```
+
+5. Start the development server
 
    ```bash
    yarn dev
@@ -58,11 +64,7 @@
    npm run dev
    ```
 
-5. Open http://localhost:3000 in your browser
-
-## Project Structure
-
-# Configuration
+6. Open http://localhost:3000 in your browser
 
 # Development Workflow
 
@@ -70,6 +72,7 @@ Development: yarn dev - Start development server
 Build: yarn build - Build for production
 Preview: yarn preview - Preview production build
 Lint: yarn lint - Run ESLint
+Test: yarn test - Run vitest for project
 
 # Code Architecture
 
@@ -79,14 +82,18 @@ Component Composition: Followed for UI element reusability
 React Router: For client-side routing and navigation
 Responsive Design: Using MUI's responsive layout system
 
+# DX improvement
+
+- pre-commit: Automatically checks code quality before each commit to maintain standards.
+- vite: Fast development server and build tool that saves time during development.
+- eslint: Catches code errors and enforces consistent coding patterns.
+- prettier: Automatically formats code to keep style consistent across the project.
+- git: Version control system to track changes and collaborate effectively.
+- typescript: Adds type safety to JavaScript, preventing common errors and improving code completion.
+
 # API Integration
 
 The application uses the TMDB (The Movie Database) API for fetching movie data. A custom adapter pattern is implemented to handle data transformation and error resilience.
-
-# Browser Support
-
-Chrome, Firefox, Safari, Edge (latest 2 versions)
-Responsive design supports mobile, tablet, and desktop views
 
 # License
 

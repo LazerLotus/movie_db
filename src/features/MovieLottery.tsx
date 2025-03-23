@@ -13,6 +13,7 @@ import {
 import canvasConfetti from "canvas-confetti";
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { getRandomMovies } from "utils/movieUtils";
 import { Movie } from "../services/api";
 
 interface MovieLotteryProps {
@@ -33,12 +34,9 @@ const MovieLotteryDialog = ({
   const spinIntervalRef = useRef<number | null>(null);
 
   // Initialize random movies for the slot machine
-  const getRandomMovies = useCallback(
+  const getMoviesForDisplay = useCallback(
     (count: number): Movie[] => {
-      if (watchlist.length === 0) return [];
-      return Array(count)
-        .fill(null)
-        .map(() => watchlist[Math.floor(Math.random() * watchlist.length)]);
+      return getRandomMovies(watchlist, count);
     },
     [watchlist]
   );
@@ -70,7 +68,7 @@ const MovieLotteryDialog = ({
 
       // Initialize with random movies
       if (watchlist.length > 0) {
-        setVisibleMovies(getRandomMovies(5));
+        setVisibleMovies(getMoviesForDisplay(5));
       }
     }
 
@@ -81,7 +79,7 @@ const MovieLotteryDialog = ({
         spinIntervalRef.current = null;
       }
     };
-  }, [open, watchlist, getRandomMovies]);
+  }, [open, watchlist, getMoviesForDisplay]);
 
   // Resize canvas
   useEffect(() => {
@@ -145,7 +143,7 @@ const MovieLotteryDialog = ({
       setVisibleMovies((prev) => {
         // During fast phase, completely randomize
         if (spinCount <= FAST_PHASE) {
-          return getRandomMovies(prev.length);
+          return getMoviesForDisplay(prev.length);
         }
         // During slowing phase, gradually stabilize on winning movie
         else {
@@ -158,7 +156,7 @@ const MovieLotteryDialog = ({
 
             // Other positions gradually stabilize
             const shouldStabilize = Math.random() < stabilityFactor;
-            return shouldStabilize ? movie : getRandomMovies(1)[0];
+            return shouldStabilize ? movie : getMoviesForDisplay(1)[0];
           });
         }
       });
