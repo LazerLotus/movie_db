@@ -83,7 +83,7 @@ const WatchlistPage = () => {
           <Typography variant="h4" gutterBottom>
             待看清單
           </Typography>
-          {watchlist.length > 0 && (
+          {watchlist.length > 5 ? (
             <Box>
               <Button
                 variant="contained"
@@ -94,6 +94,10 @@ const WatchlistPage = () => {
                 隨機選片
               </Button>
             </Box>
+          ) : (
+            <Typography variant="body1">
+              再多選 {6 - watchlist.length} 部電影才能玩拉霸！
+            </Typography>
           )}
         </Stack>
         {watchlist.length === 0 ? (

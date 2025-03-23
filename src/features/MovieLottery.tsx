@@ -68,7 +68,7 @@ const MovieLotteryDialog = ({
 
       // Initialize with random movies
       if (watchlist.length > 0) {
-        setVisibleMovies(getMoviesForDisplay(5));
+        setVisibleMovies(getMoviesForDisplay(Math.min(5, watchlist.length)));
       }
     }
 
